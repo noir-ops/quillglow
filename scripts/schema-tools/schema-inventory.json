@@ -1,0 +1,1772 @@
+{
+  "summary": {
+    "tables_used_in_code": 56,
+    "tables_with_migrations": 18,
+    "tables_MISSING_migrations": 38
+  },
+  "missing_migrations": [
+    "ambassador_certificates",
+    "ambassador_rewards",
+    "ambassadors",
+    "audio_overviews",
+    "community_channels",
+    "community_messages",
+    "community_reports",
+    "early_access",
+    "echomind_logs",
+    "essay_attempts",
+    "feature_feedback",
+    "generated_exams",
+    "habit_completions",
+    "habits",
+    "leaderboard",
+    "mind_maps",
+    "mock_exam_attempts",
+    "partners",
+    "referrals",
+    "revision_notes",
+    "search_bookmarks",
+    "search_history",
+    "study_agent_sessions",
+    "study_buddy_matches",
+    "study_buddy_requests",
+    "study_room_members",
+    "study_room_messages",
+    "study_rooms",
+    "study_sessions",
+    "study_tracker_orders",
+    "subject_colors",
+    "time_blocks",
+    "tutor_memory",
+    "tutor_profiles",
+    "tutor_sessions",
+    "user_public_profile",
+    "user_themes",
+    "writing_improver_logs"
+  ],
+  "has_migrations": [
+    "achievements",
+    "ai_provider_settings",
+    "blog_posts",
+    "contact_messages",
+    "flashcard_decks",
+    "flashcards",
+    "mood_logs",
+    "notes",
+    "pomodoro_sessions",
+    "profiles",
+    "quests",
+    "study_plan_goals",
+    "study_plans",
+    "subscriptions",
+    "tasks",
+    "usage_tracking",
+    "user_achievements",
+    "user_quests"
+  ],
+  "detail": {
+    "achievements": {
+      "has_migration": true,
+      "inferred_columns": [
+        "requirement_value"
+      ],
+      "written_columns": [],
+      "filtered_columns": [
+        "requirement_value"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/achievements/route.ts"
+      ]
+    },
+    "ai_provider_settings": {
+      "has_migration": true,
+      "inferred_columns": [
+        "id"
+      ],
+      "written_columns": [],
+      "filtered_columns": [
+        "id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "lib/ai/provider.ts"
+      ]
+    },
+    "ambassador_certificates": {
+      "has_migration": false,
+      "inferred_columns": [
+        "ambassador_id",
+        "certificate_data",
+        "certificate_id",
+        "certificate_url",
+        "created_at",
+        "date_issued",
+        "id",
+        "milestone",
+        "name",
+        "university"
+      ],
+      "written_columns": [
+        "ambassador_id",
+        "certificate_data",
+        "certificate_id",
+        "certificate_url",
+        "date_issued",
+        "milestone",
+        "name",
+        "university"
+      ],
+      "filtered_columns": [
+        "ambassador_id",
+        "created_at",
+        "milestone"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/ambassador/certificate/route.ts",
+        "app/api/ambassador/certificate/verify/route.ts",
+        "app/api/ambassador/stats/route.ts",
+        "app/api/ambassador/track-referral/route.ts"
+      ]
+    },
+    "ambassador_rewards": {
+      "has_migration": false,
+      "inferred_columns": [
+        "ambassador_id",
+        "created_at",
+        "issued",
+        "issued_at",
+        "milestone",
+        "reward_description",
+        "reward_type"
+      ],
+      "written_columns": [
+        "ambassador_id",
+        "issued",
+        "issued_at",
+        "milestone",
+        "reward_description",
+        "reward_type"
+      ],
+      "filtered_columns": [
+        "ambassador_id",
+        "created_at"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/ambassador/stats/route.ts",
+        "app/api/ambassador/track-referral/route.ts"
+      ]
+    },
+    "ambassadors": {
+      "has_migration": false,
+      "inferred_columns": [
+        "country",
+        "created_at",
+        "id",
+        "message",
+        "name",
+        "referral_code",
+        "referral_link",
+        "reward_level",
+        "status",
+        "total_referrals",
+        "university",
+        "updated_at",
+        "user_id",
+        "verified_referrals"
+      ],
+      "written_columns": [
+        "country",
+        "message",
+        "referral_code",
+        "referral_link",
+        "reward_level",
+        "status",
+        "total_referrals",
+        "updated_at",
+        "user_id",
+        "verified_referrals"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "referral_code",
+        "status",
+        "user_id",
+        "verified_referrals"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/ambassador/certificate/route.ts",
+        "app/api/ambassador/leaderboard/route.ts",
+        "app/api/ambassador/register/route.ts",
+        "app/api/ambassador/stats/route.ts",
+        "app/api/ambassador/track-referral/route.ts",
+        "app/auth/callback/route.ts"
+      ]
+    },
+    "audio_overviews": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "duration_mode",
+        "id",
+        "original_content",
+        "script",
+        "source_type",
+        "study_mode",
+        "subject",
+        "text",
+        "title",
+        "user_id",
+        "voice_style"
+      ],
+      "written_columns": [
+        "duration_mode",
+        "original_content",
+        "script",
+        "source_type",
+        "study_mode",
+        "subject",
+        "text",
+        "title",
+        "user_id",
+        "voice_style"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/audio-overview/route.ts",
+        "app/api/echomind/references/route.ts",
+        "components/audio-overview/audio-overview-generator.tsx"
+      ]
+    },
+    "blog_posts": {
+      "has_migration": true,
+      "inferred_columns": [
+        "id",
+        "published",
+        "published_at",
+        "slug",
+        "views"
+      ],
+      "written_columns": [
+        "views"
+      ],
+      "filtered_columns": [
+        "id",
+        "published",
+        "published_at",
+        "slug"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/blog/[slug]/route.ts",
+        "app/api/blog/route.ts",
+        "app/blog/[slug]/page.tsx",
+        "app/blog/page.tsx"
+      ]
+    },
+    "community_channels": {
+      "has_migration": false,
+      "inferred_columns": [
+        "id",
+        "is_locked",
+        "slug"
+      ],
+      "written_columns": [],
+      "filtered_columns": [
+        "id",
+        "slug"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/community/channels/route.ts",
+        "app/api/community/messages/route.ts"
+      ]
+    },
+    "community_messages": {
+      "has_migration": false,
+      "inferred_columns": [
+        "channel_id",
+        "content",
+        "created_at",
+        "image_url",
+        "user_id"
+      ],
+      "written_columns": [
+        "content",
+        "image_url",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "channel_id",
+        "created_at"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/community/messages/route.ts"
+      ]
+    },
+    "community_reports": {
+      "has_migration": false,
+      "inferred_columns": [
+        "reporter_id"
+      ],
+      "written_columns": [
+        "reporter_id"
+      ],
+      "filtered_columns": [],
+      "select_star_used": false,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/community/report/route.ts"
+      ]
+    },
+    "contact_messages": {
+      "has_migration": true,
+      "inferred_columns": [
+        "created_at",
+        "email",
+        "id",
+        "message",
+        "name",
+        "status",
+        "subject",
+        "thread_id",
+        "ticket_number"
+      ],
+      "written_columns": [
+        "email",
+        "message",
+        "name",
+        "status",
+        "subject",
+        "thread_id",
+        "ticket_number"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "email",
+        "id",
+        "thread_id",
+        "ticket_number"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/chatbot/route.ts",
+        "app/api/contact/route.ts",
+        "app/support/actions.ts"
+      ]
+    },
+    "early_access": {
+      "has_migration": false,
+      "inferred_columns": [
+        "name",
+        "os",
+        "play_store_email"
+      ],
+      "written_columns": [
+        "name",
+        "os",
+        "play_store_email"
+      ],
+      "filtered_columns": [],
+      "select_star_used": false,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/early-access/route.ts"
+      ]
+    },
+    "echomind_logs": {
+      "has_migration": false,
+      "inferred_columns": [
+        "context",
+        "context_summary",
+        "created_at",
+        "id",
+        "mode",
+        "query",
+        "response",
+        "user_id"
+      ],
+      "written_columns": [
+        "context",
+        "context_summary",
+        "query",
+        "response",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/history/route.ts",
+        "app/api/echomind/route.ts",
+        "app/api/echomind/usage/route.ts",
+        "app/api/study-agent/route.ts"
+      ]
+    },
+    "essay_attempts": {
+      "has_migration": false,
+      "inferred_columns": [
+        "ai_score",
+        "created_at",
+        "feedback_json",
+        "id",
+        "question_text",
+        "updated_at",
+        "user_answer",
+        "user_id",
+        "word_count"
+      ],
+      "written_columns": [
+        "ai_score",
+        "feedback_json",
+        "updated_at",
+        "user_answer",
+        "word_count"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/references/route.ts",
+        "app/api/essay/route.ts"
+      ]
+    },
+    "feature_feedback": {
+      "has_migration": false,
+      "inferred_columns": [
+        "feature_name",
+        "id",
+        "selected_option",
+        "user_id"
+      ],
+      "written_columns": [
+        "user_id"
+      ],
+      "filtered_columns": [
+        "feature_name",
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/feature-feedback/route.ts",
+        "components/dashboard/merch-poll-card.tsx"
+      ]
+    },
+    "flashcard_decks": {
+      "has_migration": true,
+      "inferred_columns": [
+        "card_count",
+        "created_at",
+        "flashcards",
+        "id",
+        "name",
+        "subject",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "subject",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "name",
+        "updated_at",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/references/route.ts",
+        "app/api/study-agent/route.ts",
+        "app/dashboard/page.tsx",
+        "app/flashcards/page.tsx",
+        "app/profile/page.tsx",
+        "components/flashcards/deck-selector.tsx",
+        "components/flashcards/flashcard-empty-state.tsx",
+        "components/flashcards/flashcard-study.tsx"
+      ]
+    },
+    "flashcards": {
+      "has_migration": true,
+      "inferred_columns": [
+        "answer",
+        "cloze_text",
+        "created_at",
+        "deck_id",
+        "difficulty",
+        "flashcard_decks",
+        "id",
+        "next_review_date",
+        "priority",
+        "question",
+        "reverse_enabled",
+        "review_interval_days",
+        "times_reviewed",
+        "updated_at"
+      ],
+      "written_columns": [
+        "answer",
+        "cloze_text",
+        "deck_id",
+        "difficulty",
+        "next_review_date",
+        "priority",
+        "question",
+        "reverse_enabled",
+        "review_interval_days",
+        "times_reviewed"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "deck_id",
+        "id",
+        "times_reviewed",
+        "updated_at"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/analytics/page.tsx",
+        "app/api/ai/generate-flashcards/route.ts",
+        "app/api/analytics/heatmap/route.ts",
+        "app/api/subscription/status/route.ts",
+        "components/flashcards/flashcard-study.tsx"
+      ]
+    },
+    "generated_exams": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "id",
+        "key_exam_points",
+        "long_answer",
+        "multiple_choice",
+        "pdf_filename",
+        "short_answer",
+        "subject",
+        "summary",
+        "user_id"
+      ],
+      "written_columns": [
+        "key_exam_points",
+        "long_answer",
+        "multiple_choice",
+        "pdf_filename",
+        "short_answer",
+        "subject",
+        "summary",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/analytics/heatmap/route.ts",
+        "app/api/echomind/references/route.ts",
+        "app/api/pdf/exam-questions/route.ts"
+      ]
+    },
+    "habit_completions": {
+      "has_migration": false,
+      "inferred_columns": [
+        "completed_date",
+        "habit_id",
+        "id",
+        "user_id"
+      ],
+      "written_columns": [
+        "completed_date",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "completed_date",
+        "habit_id",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/analytics/habit-heatmap/route.ts",
+        "app/api/habits/toggle/route.ts"
+      ]
+    },
+    "habits": {
+      "has_migration": false,
+      "inferred_columns": [
+        "archived",
+        "color",
+        "created_at",
+        "habit_completions",
+        "habit_name",
+        "icon",
+        "id",
+        "user_id"
+      ],
+      "written_columns": [
+        "archived",
+        "color",
+        "habit_name",
+        "icon",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "archived",
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/analytics/habit-heatmap/route.ts",
+        "app/api/habits/route.ts"
+      ]
+    },
+    "leaderboard": {
+      "has_migration": false,
+      "inferred_columns": [],
+      "written_columns": [],
+      "filtered_columns": [],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/leaderboard/route.ts",
+        "app/leaderboard/page.tsx"
+      ]
+    },
+    "mind_maps": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "id",
+        "map_data",
+        "source_ids",
+        "source_type",
+        "subject",
+        "title",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "map_data",
+        "source_ids",
+        "source_type",
+        "subject",
+        "title",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/mind-map/route.ts"
+      ]
+    },
+    "mock_exam_attempts": {
+      "has_migration": false,
+      "inferred_columns": [
+        "completed_at",
+        "correct_answers",
+        "created_at",
+        "difficulty",
+        "document_ids",
+        "id",
+        "questions",
+        "score_percentage",
+        "started_at",
+        "status",
+        "time_limit_minutes",
+        "time_taken_seconds",
+        "total_questions",
+        "user_answers",
+        "user_id"
+      ],
+      "written_columns": [
+        "completed_at",
+        "correct_answers",
+        "document_ids",
+        "questions",
+        "score_percentage",
+        "started_at",
+        "status",
+        "time_limit_minutes",
+        "time_taken_seconds",
+        "total_questions",
+        "user_answers",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "completed_at",
+        "created_at",
+        "id",
+        "status",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/references/route.ts",
+        "app/api/mock-exam/route.ts",
+        "app/api/study-agent/route.ts"
+      ]
+    },
+    "mood_logs": {
+      "has_migration": true,
+      "inferred_columns": [
+        "logged_at",
+        "mood_score",
+        "user_id"
+      ],
+      "written_columns": [
+        "mood_score",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "logged_at",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/analytics/page.tsx",
+        "components/analytics/mood-tracker.tsx"
+      ]
+    },
+    "notes": {
+      "has_migration": true,
+      "inferred_columns": [
+        "attachments",
+        "content",
+        "created_at",
+        "id",
+        "linked_note_ids",
+        "source",
+        "subject",
+        "tags",
+        "title",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "attachments",
+        "content",
+        "linked_note_ids",
+        "source",
+        "subject",
+        "tags",
+        "title",
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "updated_at",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/references/route.ts",
+        "app/api/study-agent/route.ts",
+        "app/api/subscription/status/route.ts",
+        "app/notes/page.tsx",
+        "app/profile/page.tsx",
+        "components/flashcards/ai-flashcard-generator.tsx",
+        "components/flashcards/flashcard-study.tsx",
+        "components/notes/note-editor.tsx",
+        "components/notes/notes-sidebar.tsx",
+        "components/tutor/tutor-chat.tsx"
+      ]
+    },
+    "partners": {
+      "has_migration": false,
+      "inferred_columns": [
+        "type"
+      ],
+      "written_columns": [],
+      "filtered_columns": [
+        "type"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/partners/route.ts"
+      ]
+    },
+    "pomodoro_sessions": {
+      "has_migration": true,
+      "inferred_columns": [
+        "completed",
+        "completed_at",
+        "duration_minutes",
+        "id",
+        "session_id",
+        "started_at",
+        "task_id",
+        "user_id"
+      ],
+      "written_columns": [
+        "completed",
+        "completed_at",
+        "duration_minutes",
+        "session_id",
+        "started_at",
+        "task_id",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "completed",
+        "completed_at",
+        "session_id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/analytics/page.tsx",
+        "app/api/analytics/heatmap/route.ts",
+        "app/timer/page.tsx",
+        "components/planner/pomodoro-timer.tsx"
+      ]
+    },
+    "profiles": {
+      "has_migration": true,
+      "inferred_columns": [
+        "avatar_id",
+        "avatar_url",
+        "display_name",
+        "id",
+        "last_activity_date",
+        "level",
+        "referral_verified",
+        "referred_by",
+        "sidebar_collapsed",
+        "streak_days",
+        "study_together_enabled",
+        "xp"
+      ],
+      "written_columns": [
+        "avatar_id",
+        "display_name",
+        "id",
+        "last_activity_date",
+        "level",
+        "referral_verified",
+        "referred_by",
+        "sidebar_collapsed",
+        "streak_days",
+        "study_together_enabled",
+        "xp"
+      ],
+      "filtered_columns": [
+        "id",
+        "xp"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/ambassador/track-referral/route.ts",
+        "app/api/leaderboard/route.ts",
+        "app/api/preferences/study-together/route.ts",
+        "app/api/profile/update/route.ts",
+        "app/api/quests/submit/route.ts",
+        "app/api/study-together/messages/route.ts",
+        "app/api/study-together/rooms/[roomId]/route.ts",
+        "app/auth/callback/route.ts",
+        "app/leaderboard/page.tsx",
+        "app/profile/page.tsx",
+        "components/community/community-chat.tsx",
+        "components/dashboard/app-layout.tsx",
+        "components/study-together/study-room-chat.tsx"
+      ]
+    },
+    "quests": {
+      "has_migration": true,
+      "inferred_columns": [
+        "created_at",
+        "description",
+        "difficulty",
+        "id",
+        "questions",
+        "subject",
+        "title",
+        "xp_reward"
+      ],
+      "written_columns": [
+        "description",
+        "difficulty",
+        "questions",
+        "subject",
+        "title",
+        "xp_reward"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "difficulty",
+        "id",
+        "subject"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/quests/generate/route.ts",
+        "app/api/quests/list/route.ts",
+        "app/api/quests/submit/route.ts",
+        "app/quest/[id]/page.tsx"
+      ]
+    },
+    "referrals": {
+      "has_migration": false,
+      "inferred_columns": [
+        "ambassador_id",
+        "created_at",
+        "id",
+        "referral_code",
+        "referred_email",
+        "referred_user_id",
+        "status",
+        "verification_date"
+      ],
+      "written_columns": [
+        "ambassador_id",
+        "referral_code",
+        "referred_email",
+        "referred_user_id",
+        "status",
+        "verification_date"
+      ],
+      "filtered_columns": [
+        "ambassador_id",
+        "created_at",
+        "id",
+        "referred_user_id",
+        "status"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/ambassador/stats/route.ts",
+        "app/api/ambassador/track-referral/route.ts",
+        "app/auth/callback/route.ts"
+      ]
+    },
+    "revision_notes": {
+      "has_migration": false,
+      "inferred_columns": [
+        "ai_notes",
+        "created_at",
+        "depth_level",
+        "highlights",
+        "id",
+        "mode",
+        "original_content",
+        "source_type",
+        "subject",
+        "title",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "ai_notes",
+        "highlights",
+        "mode",
+        "original_content",
+        "source_type",
+        "subject",
+        "title",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/references/route.ts",
+        "app/api/revision-notes/route.ts",
+        "components/flashcards/ai-flashcard-generator.tsx"
+      ]
+    },
+    "search_bookmarks": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "written_columns": [
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/search/bookmarks/route.ts"
+      ]
+    },
+    "search_history": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "search_type",
+        "user_id"
+      ],
+      "written_columns": [
+        "search_type",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/search/history/route.ts",
+        "app/api/search/web/route.ts"
+      ]
+    },
+    "study_agent_sessions": {
+      "has_migration": false,
+      "inferred_columns": [
+        "analysis",
+        "created_at",
+        "generated_exam",
+        "generated_notes",
+        "id",
+        "input_text",
+        "input_type",
+        "mind_map_data",
+        "review_plan",
+        "status",
+        "steps_completed",
+        "study_plan",
+        "subject",
+        "user_id",
+        "weakness_insights",
+        "youtube_links"
+      ],
+      "written_columns": [
+        "analysis",
+        "generated_exam",
+        "generated_notes",
+        "input_text",
+        "input_type",
+        "mind_map_data",
+        "review_plan",
+        "status",
+        "steps_completed",
+        "study_plan",
+        "subject",
+        "user_id",
+        "weakness_insights",
+        "youtube_links"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/study-agent/history/route.ts",
+        "app/api/study-agent/route.ts",
+        "app/api/study-agent/session/route.ts",
+        "app/api/study-agent/usage/route.ts"
+      ]
+    },
+    "study_buddy_matches": {
+      "has_migration": false,
+      "inferred_columns": [
+        "request_a",
+        "request_b",
+        "room_id"
+      ],
+      "written_columns": [
+        "request_a",
+        "request_b",
+        "room_id"
+      ],
+      "filtered_columns": [],
+      "select_star_used": false,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/matchmaking/start-session/route.ts"
+      ]
+    },
+    "study_buddy_requests": {
+      "has_migration": false,
+      "inferred_columns": [
+        "id",
+        "status",
+        "user_id"
+      ],
+      "written_columns": [
+        "status",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "id",
+        "status",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/matchmaking/find-buddies/route.ts",
+        "app/api/matchmaking/start-session/route.ts"
+      ]
+    },
+    "study_plan_goals": {
+      "has_migration": true,
+      "inferred_columns": [
+        "completed_at",
+        "description",
+        "due_date",
+        "estimated_hours",
+        "id",
+        "plan_id",
+        "priority",
+        "updated_at"
+      ],
+      "written_columns": [
+        "completed_at",
+        "description",
+        "due_date",
+        "estimated_hours",
+        "plan_id",
+        "priority",
+        "updated_at"
+      ],
+      "filtered_columns": [
+        "id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/study-plans/goals/add/route.ts",
+        "app/api/study-plans/goals/toggle/route.ts",
+        "app/api/study-plans/save/route.ts"
+      ]
+    },
+    "study_plans": {
+      "has_migration": true,
+      "inferred_columns": [
+        "created_at",
+        "duration",
+        "end_date",
+        "goals_text",
+        "id",
+        "start_date",
+        "subject",
+        "tips",
+        "title",
+        "user_id"
+      ],
+      "written_columns": [
+        "duration",
+        "end_date",
+        "goals_text",
+        "start_date",
+        "subject",
+        "tips",
+        "title",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id",
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/study-plans/delete/route.ts",
+        "app/api/study-plans/goals/add/route.ts",
+        "app/api/study-plans/list/route.ts",
+        "app/api/study-plans/save/route.ts",
+        "app/profile/page.tsx"
+      ]
+    },
+    "study_room_members": {
+      "has_migration": false,
+      "inferred_columns": [
+        "id",
+        "joined_at",
+        "role",
+        "room_id",
+        "user_id"
+      ],
+      "written_columns": [],
+      "filtered_columns": [
+        "joined_at",
+        "room_id",
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/matchmaking/start-session/route.ts",
+        "app/api/study-together/messages/route.ts",
+        "app/api/study-together/rooms/[roomId]/route.ts",
+        "app/api/study-together/rooms/route.ts"
+      ]
+    },
+    "study_room_messages": {
+      "has_migration": false,
+      "inferred_columns": [
+        "content",
+        "created_at",
+        "image_url",
+        "room_id",
+        "type",
+        "user_id"
+      ],
+      "written_columns": [
+        "content",
+        "image_url",
+        "type",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "room_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/study-together/messages/route.ts"
+      ]
+    },
+    "study_rooms": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "description",
+        "id",
+        "invite_enabled",
+        "max_members",
+        "name",
+        "owner_id"
+      ],
+      "written_columns": [
+        "description",
+        "invite_enabled",
+        "max_members",
+        "name",
+        "owner_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/matchmaking/start-session/route.ts",
+        "app/api/study-together/rooms/[roomId]/route.ts",
+        "app/api/study-together/rooms/route.ts"
+      ]
+    },
+    "study_sessions": {
+      "has_migration": false,
+      "inferred_columns": [
+        "end_time",
+        "session_name",
+        "start_time",
+        "task_reference",
+        "user_id"
+      ],
+      "written_columns": [
+        "end_time",
+        "session_name",
+        "task_reference",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "start_time",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/study-sessions/route.ts"
+      ]
+    },
+    "study_tracker_orders": {
+      "has_migration": false,
+      "inferred_columns": [
+        "amount",
+        "created_at",
+        "currency",
+        "email",
+        "id",
+        "name",
+        "payment_provider",
+        "payment_status",
+        "polar_session_id",
+        "price",
+        "product_name",
+        "status",
+        "tracker_file_url",
+        "user_id"
+      ],
+      "written_columns": [
+        "currency",
+        "email",
+        "payment_provider",
+        "payment_status",
+        "polar_session_id",
+        "product_name",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "email",
+        "polar_session_id",
+        "status"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": false,
+      "touched_by": [
+        "app/api/orders/search/route.ts",
+        "app/api/shop/verify-payment/route.ts"
+      ]
+    },
+    "subject_colors": {
+      "has_migration": false,
+      "inferred_columns": [
+        "color",
+        "subject",
+        "user_id"
+      ],
+      "written_columns": [
+        "user_id"
+      ],
+      "filtered_columns": [
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "components/analytics/subject-breakdown.tsx"
+      ]
+    },
+    "subscriptions": {
+      "has_migration": true,
+      "inferred_columns": [
+        "created_at",
+        "current_period_end",
+        "id",
+        "plan_type",
+        "polar_customer_id",
+        "polar_subscription_id",
+        "status",
+        "user_id"
+      ],
+      "written_columns": [
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "plan_type",
+        "status",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/ambassador/track-referral/route.ts",
+        "app/api/echomind/route.ts",
+        "app/api/echomind/usage/route.ts",
+        "app/api/pdf/exam-questions/route.ts",
+        "app/api/study-agent/route.ts",
+        "app/api/study-agent/usage/route.ts",
+        "app/api/subscription/billing-portal/route.ts",
+        "app/api/subscription/status/route.ts",
+        "app/api/subscription/verify-payment/route.ts",
+        "app/api/writereal/route.ts",
+        "app/api/writereal/usage/route.ts",
+        "app/settings/page.tsx",
+        "components/dashboard/app-layout.tsx"
+      ]
+    },
+    "tasks": {
+      "has_migration": true,
+      "inferred_columns": [
+        "completed",
+        "completed_at",
+        "created_at",
+        "description",
+        "due_date",
+        "id",
+        "priority",
+        "subject",
+        "title",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "completed",
+        "completed_at",
+        "created_at",
+        "description",
+        "due_date",
+        "priority",
+        "subject",
+        "title",
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "completed",
+        "completed_at",
+        "created_at",
+        "due_date",
+        "id",
+        "priority",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/analytics/page.tsx",
+        "app/api/analytics/heatmap/route.ts",
+        "app/api/echomind/references/route.ts",
+        "app/dashboard/page.tsx",
+        "app/planner/page.tsx",
+        "app/profile/page.tsx",
+        "app/schedule/page.tsx",
+        "app/timer/page.tsx",
+        "components/analytics/subject-breakdown.tsx",
+        "components/dashboard/quick-actions.tsx",
+        "components/dashboard/todays-focus.tsx",
+        "components/dashboard/todays-tasks.tsx",
+        "components/planner/ai-suggestions.tsx",
+        "components/planner/task-list.tsx"
+      ]
+    },
+    "time_blocks": {
+      "has_migration": false,
+      "inferred_columns": [
+        "color",
+        "end_time",
+        "id",
+        "start_time",
+        "task_id",
+        "title",
+        "user_id"
+      ],
+      "written_columns": [
+        "color",
+        "end_time",
+        "start_time",
+        "task_id",
+        "title",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "id",
+        "start_time",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/schedule/page.tsx"
+      ]
+    },
+    "tutor_memory": {
+      "has_migration": false,
+      "inferred_columns": [
+        "confidence_level",
+        "id",
+        "last_seen",
+        "subject",
+        "times_asked",
+        "topic",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "confidence_level",
+        "last_seen",
+        "subject",
+        "topic",
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "confidence_level",
+        "id",
+        "last_seen",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/echomind/references/route.ts",
+        "app/api/study-agent/route.ts",
+        "app/api/tutor/chat/route.ts",
+        "app/api/tutor/memory/route.ts"
+      ]
+    },
+    "tutor_profiles": {
+      "has_migration": false,
+      "inferred_columns": [
+        "exams",
+        "id",
+        "subjects",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "exams",
+        "subjects",
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/tutor/chat/route.ts",
+        "app/api/tutor/profile/route.ts"
+      ]
+    },
+    "tutor_sessions": {
+      "has_migration": false,
+      "inferred_columns": [
+        "context_type",
+        "id",
+        "messages",
+        "subject",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "context_type",
+        "messages",
+        "subject",
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "context_type",
+        "id",
+        "updated_at",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/tutor/chat/route.ts",
+        "components/flashcards/ai-flashcard-generator.tsx",
+        "components/tutor/tutor-chat.tsx"
+      ]
+    },
+    "usage_tracking": {
+      "has_migration": true,
+      "inferred_columns": [
+        "ai_generations_used",
+        "exams_generated",
+        "flashcards_created",
+        "id",
+        "month_year",
+        "tasks_created",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "ai_generations_used",
+        "exams_generated",
+        "flashcards_created",
+        "month_year",
+        "tasks_created",
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "id",
+        "month_year",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/pdf/exam-questions/route.ts",
+        "app/api/subscription/status/route.ts",
+        "app/auth/callback/route.ts",
+        "lib/utils/usage-tracking.ts"
+      ]
+    },
+    "user_achievements": {
+      "has_migration": true,
+      "inferred_columns": [
+        "achievement_id",
+        "unlocked_at",
+        "user_id"
+      ],
+      "written_columns": [],
+      "filtered_columns": [
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/achievements/route.ts"
+      ]
+    },
+    "user_public_profile": {
+      "has_migration": false,
+      "inferred_columns": [
+        "avatar_url",
+        "bio",
+        "display_name",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/community/messages/route.ts",
+        "app/api/matchmaking/find-buddies/route.ts",
+        "app/api/matchmaking/profile/route.ts",
+        "components/community/community-chat.tsx"
+      ]
+    },
+    "user_quests": {
+      "has_migration": true,
+      "inferred_columns": [
+        "completed_at",
+        "quest_id",
+        "status",
+        "user_id"
+      ],
+      "written_columns": [
+        "completed_at",
+        "quest_id",
+        "status",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "quest_id",
+        "user_id"
+      ],
+      "select_star_used": true,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/quests/start/route.ts",
+        "app/api/quests/submit/route.ts"
+      ]
+    },
+    "user_themes": {
+      "has_migration": false,
+      "inferred_columns": [
+        "theme",
+        "updated_at",
+        "user_id"
+      ],
+      "written_columns": [
+        "updated_at",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/user-theme/route.ts"
+      ]
+    },
+    "writing_improver_logs": {
+      "has_migration": false,
+      "inferred_columns": [
+        "created_at",
+        "explanation",
+        "id",
+        "improved_text",
+        "mode",
+        "original_text",
+        "tone",
+        "user_id"
+      ],
+      "written_columns": [
+        "explanation",
+        "improved_text",
+        "mode",
+        "original_text",
+        "tone",
+        "user_id"
+      ],
+      "filtered_columns": [
+        "created_at",
+        "mode",
+        "user_id"
+      ],
+      "select_star_used": false,
+      "likely_user_scoped_rls": true,
+      "touched_by": [
+        "app/api/writereal/route.ts",
+        "app/api/writereal/usage/route.ts"
+      ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/prune-chat-history",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}
