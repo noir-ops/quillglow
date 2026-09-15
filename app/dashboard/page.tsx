@@ -53,10 +53,6 @@ export default async function DashboardPage() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
 
-          {/* Syllabus — first thing on the page: until this is set, every AI
-              feature runs without curriculum grounding. */}
-          <SyllabusCard />
-
           {/* Discount Code Banner */}
           <div className="rounded-xl overflow-hidden shadow-md bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 p-4 flex items-center gap-3">
             <div className="text-2xl">🎟️</div>
@@ -111,7 +107,7 @@ export default async function DashboardPage() {
               </div>
             </div>
           </div>
-     
+
 
           <div className="rounded-xl border border-teal-400 bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 dark:from-teal-900/70 dark:via-cyan-900/80 dark:to-blue-900/60 p-3 shadow flex items-center gap-3 mb-3">
             <span className="text-lg">📱</span>
@@ -128,6 +124,10 @@ export default async function DashboardPage() {
 
           {/* Today's Focus Section */}
           <TodaysFocus userId={user.id} />
+
+          {/* Syllabus — first thing on the page: until this is set, every AI
+              feature runs without curriculum grounding. */}
+          <SyllabusCard />
 
           <Link href="/analytics" className="group block">
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/25 hover:scale-[1.02]">
@@ -154,7 +154,7 @@ export default async function DashboardPage() {
             </div>
           </Link>
 
-          
+
           {/* Daily Study Summary */}
           <DailyStudySummary />
 

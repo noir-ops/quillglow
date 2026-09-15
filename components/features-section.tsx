@@ -10,6 +10,15 @@ import {
 /* ─── New flagship features — alternating large cards ─── */
 const NEW_FEATURES = [
   {
+    icon: Award,
+    title: "Scholarship Provision",
+    desc: "Get matched to scholarships, grants, and STEAM programs based on what you've actually mastered — not guesswork. Real opportunities surfaced from your real study data.",
+    color: "#10B981",
+    bg: "#E8FFF4",
+    tags: ["Real Matches", "Grants & Programs", "Mastery-Based", "STEAM"],
+    layout: "left",
+  },
+  {
     icon: FileQuestion,
     title: "WriteReal — AI Humanizer",
     desc: "Paste your essay and instantly find out if it reads as AI-generated. Then rewrite it through a 3-pass humanization pipeline that kills AI phrases, injects sentence burstiness, and adds natural voice — so it passes any detector.",
@@ -35,15 +44,6 @@ const NEW_FEATURES = [
     bg: "#FFF0F8",
     tags: ["Text-to-Speech", "Commute Mode", "Night Mode", "Speed Control"],
     layout: "right",
-  },
-  {
-    icon: Award,
-    title: "Scholarship Provision",
-    desc: "Get matched to scholarships, grants, and STEAM programs based on what you've actually mastered — not guesswork. Real opportunities surfaced from your real study data.",
-    color: "#10B981",
-    bg: "#E8FFF4",
-    tags: ["Real Matches", "Grants & Programs", "Mastery-Based", "STEAM"],
-    layout: "left",
   },
 ]
 

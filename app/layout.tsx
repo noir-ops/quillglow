@@ -4,8 +4,6 @@ import { Nunito, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Suspense } from "react"
-import { SupportChatbot } from "@/components/support-chatbot"
-import { Snowfall } from "@/components/snowfall"
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -225,7 +223,6 @@ export default function RootLayout({
       </head>
       <body className={`font-sans antialiased ${nunito.variable} ${geistMono.variable}`}>
         <Suspense fallback={null}>{children}</Suspense>
-        <SupportChatbot />
         <Analytics />
       </body>
     </html>
