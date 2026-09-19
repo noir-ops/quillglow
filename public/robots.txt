@@ -1,0 +1,20 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /notes/
+Disallow: /quizzes/
+Disallow: /timer/
+Disallow: /stress-relief/
+Disallow: /upgrade/
+Disallow: /auth/verify-email
+Disallow: /auth/reset-password
+
+# Sitemap location
+Sitemap: https://www.quillglow.com/sitemap.xml
+
+# Crawl delay (optional, in seconds)
+Crawl-delay: 1
