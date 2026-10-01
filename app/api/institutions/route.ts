@@ -1,0 +1,22 @@
+import { NextResponse } from "next/server"
+import { createClient } from "@/lib/supabase/server"
+
+export const dynamic = "force-dynamic"
+
+/** Institutions students can direct Rail-2 payments to. Admin-managed catalog. */
+export async function GET() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { data, error } = await supabase
+    .from("institutions")
+    .select("id, name, country")
+    .eq("is_active", true)
+    .order("name")
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  return NextResponse.json({ institutions: data ?? [] })
+}
