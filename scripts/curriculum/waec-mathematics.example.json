@@ -1,0 +1,58 @@
+{
+  "syllabus": "WAEC",
+  "subject": "Mathematics",
+  "topics": [
+    {
+      "name": "Number and Numeration",
+      "slug": "number-numeration",
+      "concepts": [
+        {
+          "name": "Fractions and decimals",
+          "slug": "fractions-decimals",
+          "difficulty": 0.3,
+          "estimatedMinutes": 40,
+          "prerequisites": [],
+          "content": "A fraction represents part of a whole, written as a numerator over a denominator. Equivalent fractions have the same value: multiply or divide numerator and denominator by the same non-zero number. To add or subtract fractions, convert to a common denominator. To multiply, multiply numerators and denominators directly. To divide, multiply by the reciprocal of the divisor. Decimals are fractions with denominators that are powers of ten. Common error: adding denominators when adding fractions."
+        },
+        {
+          "name": "Indices and logarithms",
+          "slug": "indices-logarithms",
+          "difficulty": 0.6,
+          "estimatedMinutes": 60,
+          "prerequisites": ["fractions-decimals"],
+          "content": "Indices express repeated multiplication. Laws of indices: a^m times a^n equals a^(m+n); a^m divided by a^n equals a^(m-n); (a^m)^n equals a^(mn); a^0 equals 1 for non-zero a; a^(-n) equals 1 over a^n. A logarithm is the inverse of an index: if a^x equals b then log base a of b equals x. Laws of logarithms mirror the laws of indices. Common error: assuming log(a+b) equals log(a) plus log(b), which is false."
+        }
+      ]
+    },
+    {
+      "name": "Algebraic Processes",
+      "slug": "algebraic-processes",
+      "concepts": [
+        {
+          "name": "Expansion of brackets",
+          "slug": "expansion-brackets",
+          "difficulty": 0.35,
+          "estimatedMinutes": 35,
+          "prerequisites": ["fractions-decimals"],
+          "content": "Expanding brackets means removing them by multiplying each term inside by the term outside. For two brackets, multiply every term in the first by every term in the second. Common error: forgetting to apply a negative sign to every term inside a bracket being subtracted."
+        },
+        {
+          "name": "Factorisation of quadratic expressions",
+          "slug": "factorisation-quadratics",
+          "difficulty": 0.55,
+          "estimatedMinutes": 50,
+          "prerequisites": ["expansion-brackets"],
+          "content": "Factorising reverses expansion. For a quadratic of the form x squared plus bx plus c, find two numbers that multiply to c and add to b. When the coefficient of x squared is not 1, split the middle term then factor by grouping. Difference of two squares: a squared minus b squared factors to (a plus b)(a minus b). Common error: sign mistakes when c is negative."
+        },
+        {
+          "name": "Solving quadratic equations",
+          "slug": "solving-quadratics",
+          "difficulty": 0.65,
+          "estimatedMinutes": 60,
+          "prerequisites": ["factorisation-quadratics"],
+          "content": "A quadratic equation can be solved by factorisation, completing the square, or the quadratic formula. By factorisation: rearrange so one side equals zero, factor, then set each factor to zero. The quadratic formula gives x equals negative b plus or minus the square root of (b squared minus 4ac), all over 2a. The discriminant b squared minus 4ac determines the number of real roots: positive gives two, zero gives one, negative gives none. Common error: forgetting to move all terms to one side before factorising."
+        }
+      ]
+    }
+  ]
+}
