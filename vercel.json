@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/prune-chat-history",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/polar-reconcile",
+      "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/cron/notification-emails",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
