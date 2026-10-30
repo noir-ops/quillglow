@@ -1,0 +1,161 @@
+// Local PostgreSQL integration: PGLITE_MODULE=/absolute/path/to/pglite node scripts/test-revenue-integrity.cjs
+// Uses synthetic users and wallets only; never connects to Supabase or Polar.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {PGlite}=require(process.env.PGLITE_MODULE || '@electric-sql/pglite');
+const root=path.resolve(__dirname,'..');
+const user='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
+async function run(){
+ const {db,migration,phase1}=await require('./test-billing-fixture.cjs').createBillingFixture(PGlite);
+ const row=async(sql,args=[]) => (await db.query(sql,args)).rows[0];
+ const plan=async()=> (await row('select public.user_plan($1) as plan',[user])).plan;
+ assert.equal(await plan(),'genius','Existing lifetime grant preserved');
+ await db.exec(`update public.subscriptions set genius_grant_lifetime=false,genius_grant_until=null where user_id='${user}'`);
+ async function reset(fields){ await db.exec(`update public.subscriptions set plan_type='genius',status='active',polar_subscription_id='sub1',polar_checkout_id=null,polar_created_at=null,polar_modified_at=null,ended_at=null,past_due_at=null,genius_grant_until=null,genius_grant_lifetime=false,current_period_start=now()-interval '1 month',current_period_end=now()+interval '1 day',cancel_at_period_end=false where user_id='${user}'`); if(fields) await db.exec(`update public.subscriptions set ${fields} where user_id='${user}'`); }
+ await reset(`current_period_end=now()-interval '1 second'`); assert.equal(await plan(),'scholar','Polar IDs cannot bypass real period end');
+ await reset(`status='canceling'`); assert.equal(await plan(),'genius');
+ await reset(`status='canceling',current_period_end=null`); assert.equal(await plan(),'scholar');
+ await reset(`status='past_due',past_due_at=now()-interval '2 days'`); assert.equal(await plan(),'genius');
+ await reset(`status='past_due',past_due_at=now()-interval '4 days'`); assert.equal(await plan(),'scholar');
+ await reset(`status='past_due',past_due_at=null,current_period_end=null`); assert.equal(await plan(),'scholar','Missing grace anchor cannot mean endless grace');
+ await reset(`status='paused'`); assert.equal(await plan(),'scholar');
+ await reset(); assert.equal((await row('select plan from public.get_user_access($1)',[user])).plan,'premium');
+ const now=Date.now(); const snapshot={id:'sub1',product_id:'genius-product',status:'active',created_at:new Date(now-86400000).toISOString(),modified_at:new Date(now).toISOString(),current_period_start:new Date(now-86400000).toISOString(),current_period_end:new Date(now+86400000).toISOString()};
+ const sync=async(s,event=null,dry=false)=>(await row('select public.sync_polar_subscription($1,$2,$3,$4,$5) as result',[user,JSON.stringify(s),dry,event,'subscription.updated'])).result;
+ assert.equal((await sync(snapshot,'event1')).outcome,'applied');
+ assert.equal((await sync({...snapshot,status:'canceled',ended_at:new Date().toISOString()},'event1')).outcome,'duplicate'); assert.equal(await plan(),'genius');
+ assert.equal((await sync({...snapshot,modified_at:new Date(now-1000).toISOString(),status:'canceled'},'old-event')).outcome,'stale');
+ assert.equal((await sync({...snapshot,id:'older-sub',created_at:new Date(now-172800000).toISOString(),modified_at:new Date(now+1000).toISOString()},'old-sub')).outcome,'other_subscription');
+ const before=await row('select * from public.subscriptions where user_id=$1',[user]);
+ assert.equal((await sync({...snapshot,status:'canceled'},null,true)).outcome,'dry_run');
+ assert.deepEqual(await row('select * from public.subscriptions where user_id=$1',[user]),before,'Dry run does not modify subscription');
+ await db.exec(`create function public.fail_event_insert() returns trigger language plpgsql as $$ begin raise exception 'test event log failure'; end $$;
+ create trigger test_failure before insert on public.polar_webhook_events for each row execute function public.fail_event_insert();`);
+ await assert.rejects(()=>sync({...snapshot,status:'canceled',ended_at:new Date().toISOString()},'failing-event'));
+ assert.equal(await plan(),'genius','Event log failure rolls back entitlement write');
+ await db.exec('drop trigger test_failure on public.polar_webhook_events');
+ await sync({...snapshot,status:'canceled',ended_at:new Date().toISOString()},'cancel-event'); assert.equal(await plan(),'scholar');
+ await reset(`current_period_end=now()-interval '1 second'`);
+ assert.equal((await row('select public.expire_genius_subscriptions() as count')).count,1);
+ await reset(`current_period_end=now()-interval '1 second',genius_grant_until=now()+interval '30 days'`); assert.equal(await plan(),'genius');
+ assert.equal((await row('select public.expire_genius_subscriptions() as count')).count,0,'Independent paid grant preserved');
+ const claim=(await row("select public.claim_billing_job('test') as r")).r; assert.equal(claim.claimed,true);
+ assert.equal((await row("select public.claim_billing_job('test') as r")).r.claimed,false);
+ await db.query('select public.finish_billing_job($1,$2,$3,$4,$5)',['test',claim.token,other,false,JSON.stringify({nextPage:2})]);
+ const resume=(await row("select public.claim_billing_job('test') as r")).r; assert.equal(resume.cursor,other); assert.equal(resume.page,2);
+ await db.exec(`grant select on public.plan_limits to authenticated; update public.plan_limits set monthly_limit=10 where plan_type='scholar' and feature='task_suggestions';
+ update public.subscriptions set plan_type='scholar',status='expired',genius_grant_until=null,genius_grant_lifetime=false where user_id='${user}';
+ select set_config('request.jwt.claim.sub','${user}',false); set role authenticated;`);
+ await assert.rejects(()=>db.exec(`update public.subscriptions set plan_type='genius' where user_id='${user}'`));
+ await assert.rejects(()=>db.exec(`insert into public.subscriptions(user_id,plan_type) values('${other}','genius')`));
+ await assert.rejects(()=>db.query('select public.refund_ai_quota($1,$2,1)',[user,'task_suggestions']));
+ await assert.rejects(()=>db.query('select * from public.consume_ai_quota($1,$2,1)',[other,'task_suggestions']));
+ await assert.rejects(()=>db.query('select * from public.consume_ai_quota($1,$2,-1)',[user,'task_suggestions']));
+ const results=await Promise.all(Array.from({length:20},()=>row('select * from public.consume_ai_quota($1,$2,1)',[user,'task_suggestions'])));
+ assert.equal(results.filter(r=>r.allowed).length,10);
+ await db.exec('reset role');
+ const wallet='33333333-3333-4333-8333-333333333333';
+ await db.exec(`insert into public.family_wallets values('${wallet}','${user}','${other}',20);`);
+ const first=await row('select * from public.purchase_genius_plan_with_family_wallet($1)',[wallet]);
+ const retry=await row('select * from public.purchase_genius_plan_with_family_wallet($1)',[wallet]);
+ assert.equal(Number(first.out_balance),15.01); assert.equal(Number(retry.out_balance),15.01); assert.deepEqual(first.out_period_end,retry.out_period_end);
+ assert.equal(await plan(),'genius');
+ assert.equal((await row('select polar_subscription_id from public.subscriptions where user_id=$1',[user])).polar_subscription_id,'sub1','Family purchase preserves Polar binding');
+ await db.exec('set role anon'); await assert.rejects(()=>db.query('select public.expire_genius_subscriptions()')); await db.exec('reset role');
+ const violations=await db.query(`select proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and proname in ('sync_polar_subscription','expire_genius_subscriptions','claim_billing_job','finish_billing_job','grant_ambassador_genius') and (has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('authenticated',p.oid,'EXECUTE') or not has_function_privilege('service_role',p.oid,'EXECUTE'))`);
+ assert.equal(violations.rows.length,0);
+ // Actual signed HTTP webhook -> actual JS sync -> real SQL -> actual quota
+ // guard. Only the external Polar transport and cookie lookup are simulated.
+ const ts=require('typescript'),vm=require('node:vm'),crypto=require('node:crypto');
+ let canonical,modelCalls=0;
+ const api={auth:{getUser:async()=>({data:{user:{id:user}}})},from(table){const filters=[];return{select(){return this},eq(k,v){filters.push([k,v]);return this},limit(){return this},async maybeSingle(){
+   if(table==='billing_rollout')return {data:null,error:{code:'42P01',message:'not installed in Phase 0/1 fixture'}};
+   const allowed=['subscriptions','polar_webhook_events'];assert.ok(allowed.includes(table));
+   const q='select * from public.'+table+' where '+filters.map(([k],i)=>{assert.ok(['polar_subscription_id','user_id','webhook_id'].includes(k));return k+'=$'+(i+1)}).join(' and ')+' limit 1';
+   return {data:(await db.query(q,filters.map(x=>x[1]))).rows[0]||null,error:null};
+ }}},async rpc(name,args){try{const calls={sync_polar_subscription:['p_user_id','p_snapshot','p_dry_run','p_webhook_id','p_event_type'],consume_ai_quota_v2:['p_user_id','p_feature','p_amount'],refund_ai_quota:['p_user_id','p_feature','p_amount'],expire_genius_subscriptions:[]};assert.ok(name in calls);
+   const keys=calls[name],params=keys.map(k=>typeof args?.[k]==='object'&&args[k]!==null?JSON.stringify(args[k]):args?.[k]);
+   const q='select '+(name==='consume_ai_quota_v2'?'* from ':'')+'public.'+name+'('+keys.map((_,i)=>'$'+(i+1)).join(',')+')'+(name==='consume_ai_quota_v2'?'':' as result');
+   const res=await db.query(q,params);return {data:name==='consume_ai_quota_v2'?res.rows:res.rows[0].result,error:null};
+ }catch(e){return{data:null,error:{message:e.message}}}}};
+ function load(relative){const code=ts.transpileModule(fs.readFileSync(path.join(root,relative),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,mod={exports:{}};
+ function req(id){if(id==='next/server')return{NextResponse:{json:(x,o)=>new Response(JSON.stringify(x),{status:o?.status||200,headers:o?.headers})}};
+ if(id==='@/lib/supabase/admin')return{createAdminClient:()=>api};if(id==='@/lib/supabase/server')return{createClient:async()=>api};if(id==='@/lib/polar')return{getPolarSubscription:async()=>canonical};
+ if(id.startsWith('@/')){let p=id.slice(2);p+=fs.existsSync(path.join(root,p+'.ts'))?'.ts':'/index.ts';return load(p)}return require(id)};
+ vm.runInThisContext('(function(require,module,exports){'+code+'\n})',{filename:relative})(req,mod,mod.exports);return mod.exports;}
+ process.env.POLAR_PRODUCT_ID_GENIUS='genius-product';process.env.POLAR_WEBHOOK_SECRET='whsec_local-integration';process.env.CRON_SECRET='local-cron';
+ await db.exec(`update public.subscriptions set genius_grant_until=null,genius_grant_lifetime=false where user_id='${user}';`);
+ canonical={...snapshot,modified_at:new Date(Date.now()+100).toISOString(),metadata:{user_id:user}};
+ const webhook=load('app/api/webhooks/polar/route.ts');
+ const send=async(id)=>{const raw=JSON.stringify({type:'subscription.updated',data:{id:'sub1',status:'stale-payload'}}),stamp=String(Math.floor(Date.now()/1000));
+ const sig=crypto.createHmac('sha256',process.env.POLAR_WEBHOOK_SECRET).update(id+'.'+stamp+'.'+raw).digest('base64');
+ return webhook.POST(new Request('https://local.test/api/webhooks/polar',{method:'POST',body:raw,headers:{'webhook-id':id,'webhook-timestamp':stamp,'webhook-signature':'v1,'+sig}}));};
+ assert.equal((await send('http-renewal')).status,200);assert.equal(await plan(),'genius');
+ const guarded=load('lib/services/quota/index.ts').withQuota('task_suggestions',async()=>{modelCalls++;return new Response('generated')});
+ assert.equal((await guarded(new Request('https://local.test/api/ai/task-suggestions',{method:'POST'}))).status,200);assert.equal(modelCalls,1);
+ canonical={...canonical,status:'canceled',ended_at:new Date().toISOString(),modified_at:new Date(Date.now()+1000).toISOString()};
+ assert.equal((await send('http-revocation')).status,200);assert.equal(await plan(),'scholar');
+ assert.equal((await guarded(new Request('https://local.test/api/ai/task-suggestions',{method:'POST'}))).status,429);assert.equal(modelCalls,1,'Revoked/over-limit account never reaches model');
+ const expiry=load('app/api/cron/subscription-expiry/route.ts');assert.equal((await expiry.POST(new Request('https://local.test/api/cron/subscription-expiry',{method:'POST',headers:{authorization:'Bearer local-cron'}}))).status,200);
+ const ambassador='44444444-4444-4444-8444-444444444444';
+ await db.query("insert into public.ambassadors values($1,$2,'approved','REF')",[ambassador,other]);
+ for(let i=1;i<=15;i++){const id='55555555-5555-4555-8555-'+String(i).padStart(12,'0');await db.query('insert into auth.users values($1,now())',[id]);await db.query("insert into public.referrals(ambassador_id,referred_user_id,status) values($1,$2,'verified')",[ambassador,id]);}
+ await db.query('select public.grant_ambassador_genius($1)',[ambassador]);
+ assert.equal((await row('select count(*)::integer as n from public.billing_grant_receipts')).n,0,'Fabricated referral rows without matching learner profiles do not grant access');
+ await db.exec("insert into public.profiles select id,'REF' from auth.users where id::text like '55555555%'");
+ await db.query('select public.grant_ambassador_genius($1)',[ambassador]);
+ const reward=await row('select genius_grant_until from public.subscriptions where user_id=$1',[other]);
+ await db.query('select public.grant_ambassador_genius($1)',[ambassador]);
+ assert.deepEqual(await row('select genius_grant_until from public.subscriptions where user_id=$1',[other]),reward,'Referral reward retries never extend the grant');
+ const fresh='66666666-6666-4666-8666-666666666666';await db.query('insert into auth.users values($1,null)',[fresh]);await db.query('insert into public.profiles(id) values($1)',[fresh]);
+ await db.query('select public.finalize_confirmed_referral($1,$2)',[fresh,'REF']);
+ assert.equal((await row('select count(*)::integer as n from public.referrals where referred_user_id=$1',[fresh])).n,0);
+ await db.query('update auth.users set email_confirmed_at=now() where id=$1',[fresh]);await db.query('select public.finalize_confirmed_referral($1,$2)',[fresh,'REF']);await db.query('select public.finalize_confirmed_referral($1,$2)',[fresh,'REF']);
+ assert.equal((await row('select count(*)::integer as n from public.referrals where referred_user_id=$1',[fresh])).n,1,'Email confirmation records a referral once');
+
+ // Phase 1: custom limits survive migration reruns, and the admin change is atomic.
+ await db.exec(`select set_config('request.jwt.claim.sub','',false); reset role;
+ update public.plan_limits set monthly_limit=7 where plan_type='scholar' and feature='writereal_detect';`);
+ await db.exec(phase1);
+ assert.equal((await row(`select monthly_limit from public.plan_limits where plan_type='scholar' and feature='writereal_detect'`)).monthly_limit,7);
+ const updateArgs=[other,'scholar','writereal_detect',2,7];
+ assert.equal((await row('select public.update_plan_limit($1,$2,$3,$4,$5) as r',updateArgs)).r.monthly_limit,2);
+ await assert.rejects(()=>row('select public.update_plan_limit($1,$2,$3,$4,$5) as r',updateArgs),/Reload before saving/);
+ assert.equal((await row(`select count(*)::int n from public.audit_log where action='plan_limit.update'`)).n,1);
+ await db.exec(`create function public.reject_plan_audit() returns trigger language plpgsql as $$ begin raise exception 'audit offline'; end $$;
+ create trigger reject_plan_audit before insert on public.audit_log for each row execute function public.reject_plan_audit();`);
+ await assert.rejects(()=>row('select public.update_plan_limit($1,$2,$3,$4,$5) as r',[other,'scholar','writereal_detect',9,2]),/audit offline/);
+ assert.equal((await row(`select monthly_limit from public.plan_limits where plan_type='scholar' and feature='writereal_detect'`)).monthly_limit,2,'Failed audit rolls back limit edit');
+ await db.exec('drop trigger reject_plan_audit on public.audit_log');
+ await db.exec(`update public.subscriptions set plan_type='scholar',status='expired',genius_grant_lifetime=false,genius_grant_until=null where user_id='${user}';
+ delete from public.usage_tracking where user_id='${user}';
+ select set_config('request.jwt.claim.sub','${user}',false); set role authenticated; set timezone='Pacific/Honolulu';`);
+ const consume=(feature,n=1)=>row('select * from public.consume_ai_quota_v2($1,$2,$3)',[user,feature,n]);
+ for(const feature of ['writereal_detect','writereal_grammar','writereal_humanize','writereal_paraphrase','echomind','study_agent']) {
+   const cap=(await row('select monthly_limit from public.plan_limits where plan_type=$1 and feature=$2',['scholar',feature])).monthly_limit;
+   const results=await Promise.all(Array.from({length:cap+3},()=>consume(feature)));
+   assert.equal(results.filter(r=>r.allowed).length,cap,feature+' exact parallel cap');
+   const status=(await db.query('select * from public.get_ai_quota_status($1)',[user])).rows.find(r=>r.feature===feature);
+   assert.equal(status.used,cap);assert.equal(status.limit,cap);assert.equal(status.remaining,0);
+ }
+ await assert.rejects(()=>row('select public.update_plan_limit($1,$2,$3,$4,$5)',[user,'scholar','echomind',999,3]),/permission denied/);
+ await assert.rejects(()=>db.exec(`update public.plan_limits set monthly_limit=999`),/permission denied/);
+ await db.exec(`reset role; select set_config('request.jwt.claim.sub','',false);
+ update public.plan_limits set monthly_limit=1 where plan_type='scholar' and feature='ai_total';
+ delete from public.usage_tracking where user_id='${user}';`);
+ assert.equal((await consume('tutor_chat')).allowed,true);
+ const totalDenied=await consume('quilly_chat');assert.equal(totalDenied.allowed,false);assert.equal(totalDenied.blocked_feature,'ai_total');assert.equal(totalDenied.limit,1);
+ const totalStatus=(await db.query('select * from public.get_ai_quota_status($1)',[user])).rows.find(r=>r.feature==='ai_total');assert.equal(totalStatus.used,1);assert.equal(totalStatus.remaining,0);
+ await db.query('select public.refund_ai_quota($1,$2,999)',[user,'quilly_chat']);
+ assert.equal((await consume('quilly_chat')).allowed,false,'Refunding an unused feature cannot erase another feature usage');
+ await db.query('select public.refund_ai_quota($1,$2,999)',[user,'tutor_chat']);assert.equal((await consume('quilly_chat')).allowed,true);
+ await db.exec(`update public.plan_limits set monthly_limit=-1 where plan_type='scholar' and feature='ai_total';
+ update public.plan_limits set monthly_limit=0 where plan_type='scholar' and feature='echomind';`);
+ assert.equal((await consume('echomind')).allowed,false,'Zero means disabled');
+ await db.exec(`update public.plan_limits set monthly_limit=-1 where plan_type='scholar' and feature='echomind';`);
+ assert.equal((await consume('echomind',1000)).allowed,true,'Minus one means unlimited');
+ await db.exec(`set role anon`);await assert.rejects(()=>consume('echomind'),/permission denied/);await db.exec('reset role');
+ console.log('PASS: Phase 1 custom-value preservation; admin compare-and-set/audit rollback/authorization; all four WriteReal modes, EchoMind and StudyPilot parallel caps match usage; UTC months; combined allowance; refund accounting; zero and unlimited.');
+
+ await db.close(); console.log('PASS: real PostgreSQL migration/re-run, paid-period and grace boundaries, grandfathered grants, canonical entitlements, atomic webhook rollback/replay/order, job leases/resumption, direct-write and RPC access controls, 20 quota calls against cap 10, idempotent family-wallet/referral fulfillment; signed webhook -> JS -> SQL -> quota -> secured expiry integration.');
+}
+run().catch(e=>{console.error(e);process.exit(1)});
